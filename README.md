@@ -8,7 +8,7 @@ The only requirement for using this repository is install the last version of Py
 
 ## Main Objective:
 The main objective is to write, test and run a simple "fizz-buzz" app using Test Driven Development (TDD) techniques.
-For this kata, the repository work with a friendly webpage about TDD called TDDbuddy, that has many examples to work with, in this case fizz_buzz. 
+For this kata, this repository works with a friendly webpage about TDD called TDDbuddy, that has many examples to work with, in this case fizz_buzz. 
 You can find it in this link: [fizz_buzz_kata](http://tddbuddy.com/katas/Fizz%20Buzz%20Whiz.pdf).
 
 ## Recomendations
