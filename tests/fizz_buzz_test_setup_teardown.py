@@ -1,4 +1,3 @@
-import sys
 import unittest
 
 from fizz_buzz.fizz_buzz import fizz_buzz
@@ -20,8 +19,6 @@ class FizzBuzzTestClass(unittest.TestCase):
 
         # Assert
         self.assertEqual(number_input, result)
-
-        # TearDown
 
     def test_should_show_fizz_with_multiple_of_three(self):
 
