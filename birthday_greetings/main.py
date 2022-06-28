@@ -24,14 +24,11 @@ def get_full_name(first_name, last_name):
     return f'{first_name} {last_name}'
 
 
-def send_email():
-    header, body = reader_csv_file()
+def send_email(line, header):
     first_name_index = header.index('first_name')
     last_name_index = header.index('last_name')
-    for line in body:
-        full_name = get_full_name(first_name=line[first_name_index], last_name=line[last_name_index])
-        build_email_message(full_name)
-
+    full_name = get_full_name(first_name=line[first_name_index], last_name=line[last_name_index])
+    return build_email_message(full_name)
 
 def check_next_birthday(birthday_str):
     actual_date = datetime.datetime.now()
@@ -39,3 +36,12 @@ def check_next_birthday(birthday_str):
     if birthday_date.month - actual_date.month == 0 and birthday_date.day - actual_date.day == 1:
         return True
     return False
+
+def send_birthday_reminder():
+    header, body  = reader_csv_file()
+    date_of_birth_index = header.index('date_of_birth')
+    birthdays = []
+    for line in body:
+        if(check_next_birthday(birthday_str=line[date_of_birth_index])):
+            birthdays.append(send_email(line, header))
+    return birthdays

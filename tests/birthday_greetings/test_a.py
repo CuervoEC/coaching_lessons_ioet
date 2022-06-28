@@ -1,6 +1,7 @@
 import datetime
 
 import birthday_greetings.main as birthday
+from unittest.mock import Mock, patch
 
 
 CSV_FILE_CONTENT = (
@@ -48,36 +49,13 @@ def test_get_full_name():
     assert result == expected_result
 
 
-def test_send_email(mocker):
-    mocked_reader_csv_file = mocker.patch('birthday_greetings.main.reader_csv_file')
-    mocked_reader_csv_file.return_value = CSV_FILE_CONTENT
-    spy_get_full_name = mocker.spy(birthday, 'get_full_name')
-    spy_build_email_message = mocker.spy(birthday, 'build_email_message')
-    get_full_name_calls = [
-        mocker.call(first_name='John', last_name='Doe'), 
-        mocker.call(first_name='Mary', last_name='Ann')
-    ]
-    build_email_message_calls = [
-        mocker.call('John Doe'), 
-        mocker.call('Mary Ann')
-    ]
-
-    birthday.send_email()
-
-    mocked_reader_csv_file.assert_called_once()
-    assert spy_get_full_name.call_count == len(CSV_FILE_CONTENT[1])
-    assert spy_build_email_message.call_count == len(CSV_FILE_CONTENT[1])
-    spy_get_full_name.assert_has_calls(get_full_name_calls)
-    spy_build_email_message.assert_has_calls(build_email_message_calls)
-
-
 def test_check_next_day_is_a_birthday(mocker):
 
-    day_str = '1999/10/10'
-    birthday_str = '1999/10/09'
-    mock_actual_day = mocker.patch('datetime.datetime.now')
-    mock_actual_day.return_value = datetime.datetime.strptime(day_str, '%Y/%m/%d')
-
+   day_str = '1999/10/08'
+   birthday_str = '1999/10/09'
+   datetime_mock = mocker.Mock(wraps=datetime.datetime)
+   datetime_mock.now.return_value = datetime.datetime.strptime(day_str, '%Y/%m/%d')
+   with patch('datetime.datetime', new=datetime_mock):
     result = birthday.check_next_birthday(birthday_str)
 
     assert result is True
@@ -85,11 +63,21 @@ def test_check_next_day_is_a_birthday(mocker):
 
 def test_check_next_day_is_not_a_birthday(mocker):
 
-    day_str = '1999/09/10'
-    birthday_str = '1999/10/09'
-    mock_actual_day = mocker.patch('datetime.datetime.now')
-    mock_actual_day.return_value = datetime.datetime.strptime(day_str, '%Y/%m/%d')
-
+   day_str = '1999/09/10'
+   birthday_str = '1999/10/09'
+   datetime_mock = mocker.Mock(wraps=datetime.datetime)
+   datetime_mock.now.return_value = datetime.datetime.strptime(day_str, '%Y/%m/%d')
+   with patch('datetime.datetime', new=datetime_mock):
     result = birthday.check_next_birthday(birthday_str)
-
     assert result is False
+
+def test_send_birthday_reminder(mocker):
+   mocked_reader_csv_file = mocker.patch('birthday_greetings.main.reader_csv_file')
+   mocked_reader_csv_file.return_value = CSV_FILE_CONTENT
+   day_str = '1975/09/10'
+   datetime_mock = mocker.Mock(wraps=datetime.datetime)
+   datetime_mock.now.return_value = datetime.datetime.strptime(day_str, '%Y/%m/%d')
+   with patch('datetime.datetime', new=datetime_mock):
+    result = birthday.send_birthday_reminder()
+    assert result == ['happy birthday dear Mary Ann']
+    
